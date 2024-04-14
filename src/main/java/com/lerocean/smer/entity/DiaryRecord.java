@@ -1,14 +1,22 @@
-package com.lerocean.smer.model;
+package com.lerocean.smer.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import java.time.LocalDateTime;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
-@Builder
+@Entity
+@NoArgsConstructor
 public class DiaryRecord {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private LocalDateTime dateTime;
     private String event;
     private String automaticallyThought;
