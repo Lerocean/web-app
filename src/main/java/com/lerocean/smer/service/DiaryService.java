@@ -1,60 +1,46 @@
 package com.lerocean.smer.service;
 
-import com.lerocean.smer.model.DiaryRecord;
+import com.lerocean.smer.dto.DiaryRecordDTO;
+import com.lerocean.smer.entity.DiaryRecord;
+import com.lerocean.smer.repository.DiaryRecordsRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class DiaryService {
+    private final DiaryRecordsRepository recordsRepository;
+
     public List<DiaryRecord> getAllDiaryRecords() {
-        ArrayList<DiaryRecord> diaryRecords = new ArrayList<>();
-
-//        DiaryRecord diaryRecord = new DiaryRecord();
-//                diaryRecord.setDateTime(LocalDateTime.now());
-//        diaryRecord.setEvent("Консультация");
-//        diaryRecord.setAutomaticallyThought("Меня накажут за несделанную домашку");
-//        diaryRecord.setAction("иду на консультацию");
-//        diaryRecord.setAnswer("Я есть сама у себя и всегда на своей стороне.");
-//        diaryRecord.setDistortions("Катастрофизация");
-//        diaryRecord.setEmotion("страх");
-//
-//        diaryRecords.add(diaryRecord);
-
-
-        diaryRecords.add(DiaryRecord.builder()
-                .dateTime(LocalDateTime.now())
-                .event("Консультация")
-                .automaticallyThought("Меня накажут за несделанную домашку")
-                .action("иду на консультацию")
-                .answer("Я есть сама у себя и всегда на своей стороне.")
-                .distortions("Катастрофизация")
-                .emotion("страх")
-                .build());
-
-        diaryRecords.add(DiaryRecord.builder()
-                .dateTime(LocalDateTime.now())
-                .event("Упал на улице")
-                .automaticallyThought("Я неудачник")
-                .action("встаю и отряхиваюсь, матерюсь")
-                .answer("Все падают, главное встать")
-                .distortions("Катастрофизация")
-                .emotion("злость")
-                .build());
-
-        diaryRecords.add(DiaryRecord.builder()
-                .dateTime(LocalDateTime.now())
-                .event("Обед с мамой")
-                .automaticallyThought("Сейчас меня отчитают, я совершенно беззащитна перед мамой")
-                .action("Иду к мужу прошу поддержки")
-                .answer("Я не одна, у меня всегда есть поддержка, я могу выбирать у кого и как просить помощи")
-                .distortions("Катастрофизация")
-                .emotion("стыд")
-                .build());
-
-
-        return diaryRecords;
+        return recordsRepository.findAll();
     }
 
+    public DiaryRecord saveDiaryRecord(DiaryRecordDTO diaryRecordDTO) {
+        DiaryRecord diaryRecord = getDiaryRecordFromDto(diaryRecordDTO);
+        return recordsRepository.save(diaryRecord);
+    }
+
+    public List<DiaryRecord> saveDiaryRecords(List<DiaryRecordDTO> diaryRecordDTOList) {
+        ArrayList<DiaryRecord> diaryRecordsToSave = new ArrayList<>();
+        for (DiaryRecordDTO diaryRecordDTO : diaryRecordDTOList) {
+            diaryRecordsToSave.add(getDiaryRecordFromDto(diaryRecordDTO));
+        }
+
+        return recordsRepository.saveAll(diaryRecordsToSave);
+    }
+
+    private DiaryRecord getDiaryRecordFromDto(DiaryRecordDTO diaryRecordDTO) {
+        DiaryRecord diaryRecord = new DiaryRecord();
+        diaryRecord.setDateTime(LocalDateTime.now());
+        diaryRecord.setEvent(diaryRecordDTO.getEvent());
+        diaryRecord.setAutomaticallyThought(diaryRecordDTO.getAutomaticallyThought());
+        diaryRecord.setEmotion(diaryRecordDTO.getEmotion());
+        diaryRecord.setAction(diaryRecordDTO.getAction());
+        diaryRecord.setDistortions(diaryRecordDTO.getDistortions());
+        diaryRecord.setAnswer(diaryRecordDTO.getAnswer());
+        return diaryRecord;
+    }
 }

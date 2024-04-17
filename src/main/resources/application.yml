@@ -2,12 +2,15 @@ spring:
   application:
     name: smer dnevnik
   datasource:
-    url:
-    username:
-    password:
+    url: jdbc:h2:mem:testdb
+    username: su
+    password: password
     driver-class-name: org.h2.Driver
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: true
 
 server:
   port: 8080
