@@ -3,6 +3,7 @@ package com.lerocean.smer.service;
 import com.lerocean.smer.dto.DiaryRecordDTO;
 import com.lerocean.smer.entity.DiaryRecord;
 import com.lerocean.smer.repository.DiaryRecordsRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.util.List;
 public class DiaryService {
     private final DiaryRecordsRepository recordsRepository;
 
+    @PostConstruct
     public List<DiaryRecord> getAllDiaryRecords() {
         return recordsRepository.findAll();
     }
