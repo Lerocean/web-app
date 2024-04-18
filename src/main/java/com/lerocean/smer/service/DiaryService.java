@@ -3,26 +3,25 @@ package com.lerocean.smer.service;
 import com.lerocean.smer.dto.DiaryRecordDTO;
 import com.lerocean.smer.entity.DiaryRecord;
 import com.lerocean.smer.repository.DiaryRecordsRepository;
-import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class DiaryService {
     private final DiaryRecordsRepository recordsRepository;
 
-    @PostConstruct
     public List<DiaryRecord> getAllDiaryRecords() {
         return recordsRepository.findAll();
     }
 
     public DiaryRecord getDiaryRecordById(Long id) {
         return recordsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Diary Record not found with id " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Diary Record not found with id " + id));
     }
 
     public DiaryRecord saveDiaryRecord(DiaryRecordDTO diaryRecordDTO) {
@@ -30,15 +29,24 @@ public class DiaryService {
         return recordsRepository.save(diaryRecord);
     }
 
+    public List<DiaryRecord> saveDiaryRecords(List<DiaryRecordDTO> diaryRecordDTOList) {
+        ArrayList<DiaryRecord> diaryRecordsToSave = new ArrayList<>();
+        for (DiaryRecordDTO diaryRecordDTO : diaryRecordDTOList) {
+            diaryRecordsToSave.add(getDiaryRecordFromDto(diaryRecordDTO));
+        }
+
+        return recordsRepository.saveAll(diaryRecordsToSave);
+    }
+
     public DiaryRecord updateDiaryRecord(Long id, DiaryRecordDTO diaryRecordDTO) {
         DiaryRecord existingRecord = getDiaryRecordById(id);
-        DiaryRecord updatedRecord = getDiaryRecordFromDto(diaryRecordDTO);
-        existingRecord.setEvent(updatedRecord.getEvent());
-        existingRecord.setAutomaticallyThought(updatedRecord.getAutomaticallyThought());
-        existingRecord.setEmotion(updatedRecord.getEmotion());
-        existingRecord.setAction(updatedRecord.getAction());
-        existingRecord.setDistortions(updatedRecord.getDistortions());
-        existingRecord.setAnswer(updatedRecord.getAnswer());
+
+        existingRecord.setEvent(diaryRecordDTO.getEvent());
+        existingRecord.setAutomaticallyThought(diaryRecordDTO.getAutomaticallyThought());
+        existingRecord.setEmotion(diaryRecordDTO.getEmotion());
+        existingRecord.setAction(diaryRecordDTO.getAction());
+        existingRecord.setDistortions(diaryRecordDTO.getDistortions());
+        existingRecord.setAnswer(diaryRecordDTO.getAnswer());
         return recordsRepository.save(existingRecord);
     }
 
