@@ -9,6 +9,9 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     show-sql: true
+#    defer-datasource-initialization: true - убрали настройку потому что отключили Hibernate и создаем и наполняем таблицы сами
+    hibernate:
+      ddl-auto: none
   h2:
     console:
       enabled: true
